@@ -1,17 +1,57 @@
 fun main() {
-    fun part1(input: List<String>): Int {
-        return input.size
+    val testInputFileName = "Day01_test";
+    val inputFileName = "Day01";
+    val testInput = readInput(testInputFileName)
+    val input = readInput(inputFileName)
+
+    fun part1(input: List<String>, nameOfFile: String) {
+        getMeTheFuckingHighestCalCount(input, "$nameOfFile.txt");
     }
 
-    fun part2(input: List<String>): Int {
-        return input.size
+    part1(input, inputFileName);
+    part1(testInput, testInputFileName);
+
+    fun part2(input: List<String>) {
+        val calTotals = getListOfFuckingCaloriesTotals(input);
+        val total = calTotals.sortedDescending().slice(0..2).sum();
+
+        println("Top three elves' total calories: $total")
     }
 
-    // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day01_test")
-    check(part1(testInput) == 1)
+    part2(input);
+}
 
-    val input = readInput("Day01")
-    println(part1(input))
-    println(part2(input))
+private fun getMeTheFuckingHighestCalCount(input: List<String>, nameOfFile: String) {
+    var currentCalCount = 0;
+    var currentHighestCalCount = 0;
+
+    for (line in input) {
+        if (line.isNotEmpty()) {
+            currentCalCount += line.toInt();
+        } else {
+            if (currentHighestCalCount < currentCalCount) {
+                currentHighestCalCount = currentCalCount;
+            }
+
+            currentCalCount = 0;
+        }
+    }
+
+    println("The highest calories count in \"$nameOfFile\" is $currentHighestCalCount");
+}
+
+private fun getListOfFuckingCaloriesTotals(input: List<String>): List<Int> {
+    val allTotals = arrayListOf<Int>();
+    var currentCalCount = 0;
+
+    for (line in input) {
+        if (line.isNotEmpty()) {
+            currentCalCount += line.toInt();
+        } else {
+            allTotals.add(currentCalCount);
+            currentCalCount = 0;
+        }
+    }
+
+    return allTotals;
 }
