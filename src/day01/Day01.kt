@@ -1,3 +1,7 @@
+package day01
+
+import readInput
+
 fun main() {
     val testInputFileName = "Day01_test";
     val inputFileName = "Day01";
