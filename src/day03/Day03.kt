@@ -4,8 +4,10 @@ import readInput
 
 fun main () {
     val testInputFileName = "./day03/Day03_test"
+    val controlInputFileName = "./day03/Day03_part2_control"
     val inputFileName = "./day03/Day03"
     val testInput = readInput(testInputFileName)
+    val controlInput = readInput(controlInputFileName)
     val input = readInput(inputFileName)
 
     val alpha = arrayListOf('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
@@ -33,9 +35,27 @@ fun main () {
         }
     }
 
+    fun part2(input: List<String>): Int {
+        val by3Chunks = input.chunked(3);
+
+        return by3Chunks.sumOf { ruckSackTrio ->
+            val ruckSack1Items = ruckSackTrio[0].toCharArray();
+            val ruckSack2Items = ruckSackTrio[1].toCharArray();
+            val ruckSack3Items = ruckSackTrio[2].toCharArray();
+
+            val dupRuckItem = ruckSack1Items.findLast { currentRuckItem ->
+                ruckSack2Items.contains(currentRuckItem) && ruckSack3Items.contains(currentRuckItem)
+            }
+
+            getCharValue(dupRuckItem!!);
+        }
+    }
+
     // Validation
     check(part1(testInput) == 157);
+    check(part2(controlInput) == 70);
 
     // Debug
     println(part1(input));
+    println(part2(input));
 }
