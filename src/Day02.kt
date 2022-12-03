@@ -41,6 +41,12 @@ fun main() {
         "scissors" to "Z"
     )
 
+    val shouldWhat = mapOf(
+        "LOSE" to "X",
+        "DRAW" to "Y",
+        "WIN" to "Z"
+    )
+
 
     val testInputFileName = "Day02_test";
     val inputFileName = "Day02";
@@ -50,47 +56,47 @@ fun main() {
     fun part1(input: List<String>): Int {
         return input.sumOf {
             val oppMove = it.substring(0..0);
-            val myMove = it.substring(2..2);
+            val shouldDoMove = it.substring(2..2);
 
             when (oppMove) {
                 oppMoves["rock"] -> {
-                    when (myMove) {
-                        myMoves["rock"] -> {
-                            outcomes["DRAW"]!! + myMoveScores[myMove]!!;
+                    when (shouldDoMove) {
+                        shouldWhat["DRAW"] -> {
+                            outcomes["DRAW"]!! + myMoveScores[myMoves["rock"]]!!;
                         }
-                        myMoves["paper"] -> {
-                            outcomes["WIN"]!! + myMoveScores[myMove]!!;
+                        shouldWhat["WIN"] -> {
+                            outcomes["WIN"]!! + myMoveScores[myMoves["paper"]]!!;
                         }
-                        myMoves["scissors"] -> {
-                            outcomes["LOSE"]!! + myMoveScores[myMove]!!;
+                        shouldWhat["LOSE"] -> {
+                            outcomes["LOSE"]!! + myMoveScores[myMoves["scissors"]]!!;
                         }
                         else -> 0
                     }
                 }
                 oppMoves["paper"] -> {
-                    when (myMove) {
-                        myMoves["rock"] -> {
-                            outcomes["LOSE"]!! + myMoveScores[myMove]!!;
+                    when (shouldDoMove) {
+                        shouldWhat["DRAW"] -> {
+                            outcomes["DRAW"]!! + myMoveScores[myMoves["paper"]]!!;
                         }
-                        myMoves["paper"] -> {
-                            outcomes["DRAW"]!! + myMoveScores[myMove]!!;
+                        shouldWhat["WIN"] -> {
+                            outcomes["WIN"]!! + myMoveScores[myMoves["scissors"]]!!;
                         }
-                        myMoves["scissors"] -> {
-                            outcomes["WIN"]!! + myMoveScores[myMove]!!;
+                        shouldWhat["LOSE"] -> {
+                            outcomes["LOSE"]!! + myMoveScores[myMoves["rock"]]!!;
                         }
                         else -> 0
                     }
                 }
                 oppMoves["scissors"] -> {
-                    when (myMove) {
-                        myMoves["rock"] -> {
-                            outcomes["WIN"]!! + myMoveScores[myMove]!!;
+                    when (shouldDoMove) {
+                        shouldWhat["DRAW"] -> {
+                            outcomes["DRAW"]!! + myMoveScores[myMoves["scissors"]]!!;
                         }
-                        myMoves["paper"] -> {
-                            outcomes["LOSE"]!! + myMoveScores[myMove]!!;
+                        shouldWhat["WIN"] -> {
+                            outcomes["WIN"]!! + myMoveScores[myMoves["rock"]]!!;
                         }
-                        myMoves["scissors"] -> {
-                            outcomes["DRAW"]!! + myMoveScores[myMove]!!;
+                        shouldWhat["LOSE"] -> {
+                            outcomes["LOSE"]!! + myMoveScores[myMoves["paper"]]!!;
                         }
                         else -> 0
                     }
@@ -100,7 +106,7 @@ fun main() {
         }
     }
 
-    println(part1(testInput));
+    println(part1(input));
 
     fun part2(input: List<String>) {
     }
