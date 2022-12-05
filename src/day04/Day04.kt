@@ -13,6 +13,7 @@ fun main() {
     fun part1(input: List<String>): Int {
         var nbrFound = 0;
 
+        println("List of pairs that did not contain one or the other:")
         input.map {
             val pairArray = it.split(",")
             val pair1 = pairArray[0].split("-")
@@ -26,26 +27,23 @@ fun main() {
 
             if (pair1Part1 in pair2Part1..pair2Part2 && pair1Part2 in pair2Part1..pair2Part2) {
                 nbrFound++
-                println("------------------------------")
-                println("FP Fits in SP - $pairArray")
-                println("------------------------------")
             } else if (pair2Part1 in pair1Part1..pair1Part2 && pair2Part2 in pair1Part1..pair1Part2) {
                 nbrFound++
-                println("------------------------------")
-                println("SP Fits in FP - $pairArray")
-                println("------------------------------")
             } else {
                 println(pairArray)
             }
         }
 
-        println(nbrFound)
+        println("Number of pairs that contained one or the other: $nbrFound")
+        println("-------------------------------------------------------------")
+
         return nbrFound
     }
 
     fun part2 (input: List<String>): Int {
         var nbrFound = 0;
 
+        println("List of pairs that did not overlap each-other:")
         input.map {
             val pairArray = it.split(",")
             val pair1 = pairArray[0].split("-")
@@ -59,30 +57,23 @@ fun main() {
 
             if (pair1Part1 in pair2Part1..pair2Part2 || pair1Part2 in pair2Part1..pair2Part2) {
                 nbrFound++
-                println("------------------------------")
-                println("FP Overlaps SP - $pairArray")
-                println("------------------------------")
             } else if (pair2Part1 in pair1Part1..pair1Part2 || pair2Part2 in pair1Part1..pair1Part2) {
                 nbrFound++
-                println("------------------------------")
-                println("SP Overlaps FP - $pairArray")
-                println("------------------------------")
             } else {
-                println(pairArray)
+                println(pairArray);
             }
         }
-        println(nbrFound)
+
+        println("Number of pairs that contained one or the other: $nbrFound")
+        println("-------------------------------------------------------------")
+
         return nbrFound
     }
 
-
-
     check(part1(part1controlInput) == 2)
-    //check(part2(part1controlInput) == 4)
-
-
+    check(part2(part1controlInput) == 4)
     //part2(part1controlInput);
 
     part1(input)
-    //part2(input)
+    part2(input)
 }
