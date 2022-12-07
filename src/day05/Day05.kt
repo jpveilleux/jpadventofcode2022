@@ -13,7 +13,7 @@ fun main () {
     val input = readInput(inputFileName)
 
     fun getDocks(input: List<String>): MutableList<MutableList<String>> {
-        var docks = mutableListOf<MutableList<String>>(
+        val docks = mutableListOf<MutableList<String>>(
             mutableListOf(),
             mutableListOf(),
             mutableListOf(),
