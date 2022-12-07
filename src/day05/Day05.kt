@@ -12,13 +12,9 @@ fun main () {
     val part1controlInput = readInput(part1controlFileName)
     val input = readInput(inputFileName)
 
-    // TODO: Check to reverse from row based to col based!!!
-    // TODO: Create setCol() function
-    // TODO: Create cycle code that goes through a column to find next X crates from the beginning
-    // TODO: Change moveCrate() function to moveCrates(movedCrate: List<String>, destinationCol: Int)  -  This will use getCol() and setCol()?
-
     fun getDocks(input: List<String>): MutableList<MutableList<String>> {
         var docks = mutableListOf<MutableList<String>>(
+            mutableListOf(),
             mutableListOf(),
             mutableListOf(),
             mutableListOf(),
@@ -29,7 +25,6 @@ fun main () {
             mutableListOf()
         )
 
-        var row = 0;
         input.map { line ->
             if (line.contains("[")) {
                 val currentLineChunks = line.chunked(4);
@@ -37,61 +32,118 @@ fun main () {
                     chunk.replace("[", "").replace("]", "").replace(" ", "").trimIndent()
                 }
 
-                // Insert the crates in their appropriate spots
-                cleanedChunks.map {character ->
-                    //println("char: $character - row nbr: $row")
-                    docks[row].add(character)
-                }
-
-                // Pad the rows so the empty cells are added to array (row)
-                if(docks[row].size < 9) {
-                    for(i in 0 until  (9 - docks[row].size)) {
-                        docks[row].add("")
+                for (i in cleanedChunks.indices) {
+                    if(cleanedChunks[i].isNotEmpty()) {
+                        docks[i].add(cleanedChunks[i])
                     }
                 }
-
-                row++
             }
         }
 
         return docks
     }
 
-    fun getCrate(col: Int, row: Int, docks: MutableList<MutableList<String>>): String {
-        return docks[row - 1][col - 1];
-    }
+    fun getMoveLines(input: List<String>): List<List<Int>> {
+        val moveLines = mutableListOf<MutableList<Int>>()
 
-    fun moveCrate(oriCol: Int, oriRow: Int, targetCol: Int, targetRow: Int, docks: MutableList<MutableList<String>>) {
-        docks[targetRow - 1][targetCol - 1] = docks[oriRow - 1][oriCol - 1];
-        docks[oriRow - 1][oriCol - 1] = ""
-    }
+        input.map {line ->
+            if (line.contains("move")) {
+                val data = line.split(" ")
+                val moveLine = mutableListOf<Int>()
 
-    fun getCol(colNbr: Int, docks: MutableList<MutableList<String>>): List<String> {
-        return docks.map {
-            it[colNbr - 1]
+                for (number in 1 until data.size step 2) {
+                    moveLine.add(data[number].toInt())
+                }
+
+                moveLines.add(moveLine)
+            }
         }
+
+        return moveLines
+    }
+
+    fun addCrates(crates: MutableList<String>, col: MutableList<String>, shouldReverse: Boolean = false) {
+        for (i in 0 until crates.size) {
+            if (shouldReverse) {
+                col.add(0, crates.reversed()[i])
+            } else {
+                col.add(0, crates[i])
+            }
+        }
+    }
+
+    fun grabCrates(amount: Int, col: MutableList<String>): MutableList<String> {
+        val crates = mutableListOf<String>()
+
+        for (i in 0 until amount) {
+            crates.add(col[i])
+        }
+
+        return crates
+    }
+
+    fun removeCrates(amount: Int, col: MutableList<String>) {
+        for (i in 0 until amount) {
+            col.removeAt(0)
+        }
+    }
+
+    fun executeMove(
+        amountOfCrates: Int,
+        originColNbr: Int,
+        destinationColNbr: Int,
+        docks: MutableList<MutableList<String>>,
+        shouldReverse: Boolean = false
+    ) {
+        val oriColNbr = originColNbr - 1
+        val destColNbr = destinationColNbr - 1
+
+        val movedCrates = grabCrates(amountOfCrates, docks[oriColNbr])
+        addCrates(movedCrates, docks[destColNbr], shouldReverse)
+        removeCrates(movedCrates.size, docks[oriColNbr])
     }
 
     fun part1(input: List<String>): String {
         val docks = getDocks(input)
 
-        println(docks)
+        getMoveLines(input).map {moveLine ->
+            val amountOfCrates = moveLine[0]
+            val originCol = moveLine[1]
+            val destinationCol = moveLine[2]
 
-//        println("Crate to be moved: ${getCrate(5, 8, docks)}")
-//        println("Spot where crate is to be moved: ${getCrate(3, 3, docks)}")
-//        moveCrate(5, 8, 3, 3, docks);
-//        println("Crate to be moved (after): ${getCrate(5, 8, docks)}")
-//        println("Spot where crate was moved (after): ${getCrate(3, 3, docks)}")
-        println("Col 7: ${getCol(7, docks)}")
+            executeMove(amountOfCrates, originCol, destinationCol, docks)
+        }
 
-        //println(docks)
-        return ""
+        val endString = mutableListOf<String>()
+
+        docks.map {curCol ->
+            endString.add(curCol[0]);
+        }
+
+        return endString.joinToString("")
     }
 
     fun part2(input: List<String>): String {
-        // Part 2 code
-        return ""
+        val docks = getDocks(input)
+
+        getMoveLines(input).map {moveLine ->
+            val amountOfCrates = moveLine[0]
+            val originCol = moveLine[1]
+            val destinationCol = moveLine[2]
+            val shouldReverse = true
+
+            executeMove(amountOfCrates, originCol, destinationCol, docks, shouldReverse)
+        }
+
+        val endString = mutableListOf<String>()
+
+        docks.map {curCol ->
+            endString.add(curCol[0])
+        }
+
+        return endString.joinToString("")
     }
 
-    part1(input);
+    println(part1(input))
+    println(part2(input))
 }
