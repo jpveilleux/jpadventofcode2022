@@ -19,6 +19,15 @@ val input = readInput(inputFileName)
 //   End of Setup  ##########################################################
 // ##########################################################################
 
+// TODO: Adjust X and Y in Tree class using constructor
+// TODO: Finish Implementing the getTreesToTheNorth() and
+// TODO: -- getTreesToTheSouth() functions
+// TODO: Implement function that checks from tree in all
+// TODO: -- directions and returns TRUE is one of them
+// TODO: -- is not hidden from edge
+// TODO: -- Sum the trees visible from edge through var
+
+
 class Tree (
     val x: Int,
     val y: Int,
