@@ -39,11 +39,11 @@ class Tree (
         var treesVisible = 0
         
         for (i in x - 1 downTo  0) {
-                treesVisible++
-    
-                if(forest[y][i].height >= height){
-                    break
-                }
+            treesVisible++
+
+            if(forest[y][i].height >= height){
+                break
+            }
         }
         
         return treesVisible
@@ -63,11 +63,11 @@ class Tree (
         var treesVisible = 0
         
         for (i in x + 1 until forest[y].lastIndex + 1) {
-                treesVisible++
-    
-                if(forest[y][i].height >= height){
-                    break
-                }
+            treesVisible++
+
+            if(forest[y][i].height >= height){
+                break
+            }
         }
         
         return treesVisible
@@ -87,11 +87,11 @@ class Tree (
         var treesVisible = 0
         
         for (i in y - 1 downTo 0) {
-                treesVisible++
-    
-                if(forest[i][x].height >= height){
-                    break
-                }
+            treesVisible++
+
+            if(forest[i][x].height >= height){
+                break
+            }
         }
         
         return treesVisible
@@ -111,11 +111,11 @@ class Tree (
         var treesVisible = 0
         
         for (i in y + 1 until forest.lastIndex + 1) {
-                treesVisible++
-                
-                if(forest[i][x].height >= height){
-                    break
-                }
+            treesVisible++
+            
+            if(forest[i][x].height >= height){
+                break
+            }
         }
         
         return treesVisible
@@ -197,16 +197,16 @@ fun main () {
     
         forest.map { treeRow ->
             treeRow.map {tree ->
-                    val treeScenicScore = tree.getScenicScore(forest)
-                    
-                    println("Tree: $tree, scenicString: ${tree.scenicScoreString}")
-                    println("Current tree scenic Score: $treeScenicScore")
-                    println("Scenic Score: $bestScenicScore")
-                    println("--------------------------------")
-    
-                    if (treeScenicScore > bestScenicScore) {
-                        bestScenicScore = treeScenicScore
-                    }
+                val treeScenicScore = tree.getScenicScore(forest)
+                
+                println("Tree: $tree, scenicString: ${tree.scenicScoreString}")
+                println("Current tree scenic Score: $treeScenicScore")
+                println("Scenic Score: $bestScenicScore")
+                println("--------------------------------")
+
+                if (treeScenicScore > bestScenicScore) {
+                    bestScenicScore = treeScenicScore
+                }
             }
         }
         
