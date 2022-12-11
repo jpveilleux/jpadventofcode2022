@@ -137,10 +137,6 @@ class Tree (
     }
 }
 
-fun getTreeAt(x: Int, y: Int, forest: MutableList<MutableList<Tree>>): Tree {
-    return forest[y][x]
-}
-
 fun main () {
     fun getForest(input: List<String>): MutableList<MutableList<Tree>> {
         val forest = mutableListOf<MutableList<Tree>>()
@@ -149,7 +145,6 @@ fun main () {
             // --  Rows  -------------------
         
             val lineList = input[i].split("").drop(1).dropLast(1)
-        
             val rowTreeHeights = mutableListOf<Int>()
         
             for (f in lineList.indices) {
@@ -172,7 +167,6 @@ fun main () {
     
     fun part1 (input: List<String>): Int {
         val forest = getForest(input)
-        
         val treesVisibleFromEdge = mutableListOf<Tree>()
         
         forest.map { treeRow ->
