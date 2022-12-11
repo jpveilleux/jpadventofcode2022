@@ -1,30 +1,9 @@
 package day10
 
 import readInput
+import utils.Setup
 
-// ##########################################################################
-//   Start of Setup  ########################################################
-
-const val currentDay = 10
-
-const val baseDir = "./day${currentDay}/"
-const val testInputFileName = "${baseDir}Day${currentDay}_test"
-const val part1controlFileName = "${baseDir}Day${currentDay}_part1_control"
-const val part2controlFileName = "${baseDir}Day${currentDay}_part2_control"
-const val inputFileName = "${baseDir}Day0${currentDay}"
-
-val part1controlInput = readInput(part1controlFileName)
-val part2controlInput = readInput(part2controlFileName)
-val input = readInput(inputFileName)
-
-//   End of Setup  ##########################################################
-// ##########################################################################
-
-// "addx V" = 2 cycles
-// - add/subtract number (V) after the two cycles
-// "noop" = 1 cycle
-// - Has no effect
-
+val daySetup = Setup(10)
 
 data class SignalStrength (var signalStrength: Int)
 class Sprite (var position: List<Int>) {
@@ -162,9 +141,9 @@ fun main () {
         }
     }
     
-    check(part1(part1controlInput) == 13140)
-    check(part1(input) == 16020)
+    check(part1(daySetup.controlInput) == 13140)
+    check(part1(daySetup.input) == 16020)
     
-    part2(part1controlInput)
+    part2(daySetup.controlInput)
     //part2(input)
 }
