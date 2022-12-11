@@ -19,54 +19,121 @@ val input = readInput(inputFileName)
 //   End of Setup  ##########################################################
 // ##########################################################################
 
-// TODO: Adjust X and Y in Tree class using constructor
-// TODO: Finish Implementing the getTreesToTheNorth() and
-// TODO: -- getTreesToTheSouth() functions
-// TODO: Implement function that checks from tree in all
-// TODO: -- directions and returns TRUE is one of them
-// TODO: -- is not hidden from edge
-// TODO: -- Sum the trees visible from edge through var
-
-
 class Tree (
     val x: Int,
     val y: Int,
-    val height: Int
+    val height: Int,
+    var scenicScoreString: String = ""
 ) {
-    fun getTreesToTheWest(forest: MutableList<MutableList<Tree>>): MutableList<Tree> {
-        val treesToTheWest = mutableListOf<Tree>()
-        
-        println("Looking west")
+    fun isVisibleFromTheWest(forest: MutableList<MutableList<Tree>>): Boolean {
         for (i in x - 1 downTo  0) {
-            // println(forest[y][i])
-            treesToTheWest.add(forest[y][i])
+            if(forest[y][i].height >= height) {
+                return false
+            }
         }
         
-        return treesToTheWest
+        return true
     }
     
-    fun getTreesToTheEast(forest: MutableList<MutableList<Tree>>): MutableList<Tree> {
-        val treesToTheEast = mutableListOf<Tree>()
+    fun nbrOfTreesVisibleToTheWest(forest: MutableList<MutableList<Tree>>): Int {
+        var treesVisible = 0
         
-        println("Looking east")
+        for (i in x - 1 downTo  0) {
+                treesVisible++
+    
+                if(forest[y][i].height >= height){
+                    break
+                }
+        }
+        
+        return treesVisible
+    }
+    
+    fun isVisibleFromTheEast(forest: MutableList<MutableList<Tree>>): Boolean {
         for (i in x + 1 until forest[y].lastIndex + 1) {
-            // println(forest[y][i])
-            treesToTheEast.add(forest[y][i])
+            if(forest[y][i].height >= height) {
+                return false
+            }
+        }
+    
+        return true
+    }
+    
+    fun nbrOfTreesVisibleToTheEast(forest: MutableList<MutableList<Tree>>): Int {
+        var treesVisible = 0
+        
+        for (i in x + 1 until forest[y].lastIndex + 1) {
+                treesVisible++
+    
+                if(forest[y][i].height >= height){
+                    break
+                }
         }
         
-        return treesToTheEast
+        return treesVisible
     }
     
-    fun getTreesToTheNorth(forest: MutableList<MutableList<Tree>>) {
-        println("Looking north")
+    fun isVisibleFromTheNorth(forest: MutableList<MutableList<Tree>>): Boolean {
+        for (i in y - 1 downTo 0) {
+            if(forest[i][x].height >= height) {
+                return false
+            }
+        }
+        
+        return true
     }
     
-    fun getTreesToTheSouth(forest: MutableList<MutableList<Tree>>) {
-        println("Looking south")
+    fun nbrOfTreesVisibleToTheNorth(forest: MutableList<MutableList<Tree>>): Int {
+        var treesVisible = 0
+        
+        for (i in y - 1 downTo 0) {
+                treesVisible++
+    
+                if(forest[i][x].height >= height){
+                    break
+                }
+        }
+        
+        return treesVisible
+    }
+    
+    fun isVisibleFromTheSouth(forest: MutableList<MutableList<Tree>>): Boolean {
+        for (i in y + 1 until forest.lastIndex + 1) {
+            if(forest[i][x].height >= height) {
+                return false
+            }
+        }
+    
+        return true
+    }
+    
+    fun nbrOfTreesVisibleToTheSouth(forest: MutableList<MutableList<Tree>>): Int {
+        var treesVisible = 0
+        
+        for (i in y + 1 until forest.lastIndex + 1) {
+                treesVisible++
+                
+                if(forest[i][x].height >= height){
+                    break
+                }
+        }
+        
+        return treesVisible
+    }
+    
+    fun getScenicScore(forest: MutableList<MutableList<Tree>>): Int {
+        val westScore = nbrOfTreesVisibleToTheWest(forest)
+        val northScore = nbrOfTreesVisibleToTheNorth(forest)
+        val eastScore = nbrOfTreesVisibleToTheEast(forest)
+        val southScore = nbrOfTreesVisibleToTheSouth(forest)
+        
+        scenicScoreString = "n:$northScore * w:$westScore * s:$southScore * e:$eastScore"
+        
+        return westScore * northScore * eastScore * southScore
     }
     
     override fun toString(): String {
-        return "h:$height:x$x:y$y"
+        return "x$x:y${y}h:$height"
     }
 }
 
@@ -75,56 +142,81 @@ fun getTreeAt(x: Int, y: Int, forest: MutableList<MutableList<Tree>>): Tree {
 }
 
 fun main () {
-    fun part1 (input: List<String>) {
-        var forestWidth = 0
-        var forestLength = 0
+    fun getForest(input: List<String>): MutableList<MutableList<Tree>> {
         val forest = mutableListOf<MutableList<Tree>>()
-        
+    
         for (i in input.indices) {
             // --  Rows  -------------------
-            
+        
             val lineList = input[i].split("").drop(1).dropLast(1)
-            // println("linelist split $lineList")
-            
+        
             val rowTreeHeights = mutableListOf<Int>()
-            
+        
             for (f in lineList.indices) {
                 val treeHeight = lineList[f].toInt()
                 rowTreeHeights.add(treeHeight)
             }
-            
-            forestWidth = rowTreeHeights.size
-            forestLength++
-    
+        
             val rowOfTrees = mutableListOf<Tree>()
-            
+        
             for (j in rowTreeHeights.indices) {
                 // --  Columns  -------------------
-                
+            
                 rowOfTrees += Tree(j, i, rowTreeHeights[j])
             }
-            
+        
             forest.add(rowOfTrees)
+        }
+        return forest
+    }
     
-            //println(input[i])
+    fun part1 (input: List<String>): Int {
+        val forest = getForest(input)
+        
+        val treesVisibleFromEdge = mutableListOf<Tree>()
+        
+        forest.map { treeRow ->
+            treeRow.map {tree ->
+                if (tree.isVisibleFromTheWest(forest)
+                    || tree.isVisibleFromTheNorth(forest)
+                    || tree.isVisibleFromTheEast(forest)
+                    || tree.isVisibleFromTheSouth(forest)
+                ) {
+                    treesVisibleFromEdge.add(tree)
+                }
+            }
         }
         
-        println("forestWidth $forestWidth")
-        println("forestLength $forestLength")
-        println("forest: $forest with ${forest.size} items")
-        
-        val testTree = getTreeAt(42, 8, forest)
-        
-        //testTree.getTreesToTheWest(forest)
-        //testTree.getTreesToTheEast(forest)
-        
-        println("testTree: $testTree")
+        return treesVisibleFromEdge.size
     }
     
-    fun part2 (input: List<String>) {
+    fun part2 (input: List<String>): Int {
+        val forest = getForest(input)
+        
+        var bestScenicScore = 0
     
+        forest.map { treeRow ->
+            treeRow.map {tree ->
+                    val treeScenicScore = tree.getScenicScore(forest)
+                    
+                    println("Tree: $tree, scenicString: ${tree.scenicScoreString}")
+                    println("Current tree scenic Score: $treeScenicScore")
+                    println("Scenic Score: $bestScenicScore")
+                    println("--------------------------------")
+    
+                    if (treeScenicScore > bestScenicScore) {
+                        bestScenicScore = treeScenicScore
+                    }
+            }
+        }
+        
+        return bestScenicScore
     }
     
-    part1(input)
+    //println("Trees visible from the edge (CONTROL): ${part1(part1controlInput)}")
+    //println("Trees visible from the edge: ${part1(input)}")
+    
+    println("Best Scenic Score (CONTROL): ${part2(part1controlInput)}")
+    //println("Best Scenic Score: ${part2(input)}")
 }
 
