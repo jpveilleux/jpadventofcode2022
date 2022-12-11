@@ -269,7 +269,6 @@ fun main () {
             println("size: \"${folder.leafSize}\"")
             println("SS: \"$availableSpaceBeginning\" - AFD: \"$availableSizeIfCurrentFolderRemoved\"")
             
-            
             if (availableSizeIfCurrentFolderRemoved >= minimumAvailableSpaceNeeded) {
                 return folder.name
             }
