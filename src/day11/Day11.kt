@@ -7,12 +7,13 @@ val daySetup = Setup(11)
 data class Player (var worryLevel: Int)
 
 class Monkey (
-    val itemsList: MutableList<Int>,
-    val operation: String,
-    val test: Int,
-    val nextMonkey: List<Int>
+    var itemsList: MutableList<Int> = mutableListOf(),
+    var operation: String = "",
+    var test: Int = 0,
+    var nextMonkey: MutableList<Int> = mutableListOf(),
+    var inspectedItems: Int = 0
 ) {
-    fun getNextMonkey(playerWorryLevel: Int): Int {
+    fun getNextMonkeyId(playerWorryLevel: Int): Int {
         if (playerWorryLevel % test == 0) {
             return nextMonkey[0]
         }
@@ -20,36 +21,91 @@ class Monkey (
         return nextMonkey[1]
     }
     
-    fun readOperation (playerWorryLevel: Int) {
+    fun readOperation (player: Player): Int {
         val splitOperation = operation.split(" ")
         val firstOperand = splitOperation[0]
         val operator = splitOperation[1]
         val secondOperand = splitOperation[2]
+        val playerWorryLevel = player.worryLevel
+    
+        val a = when (firstOperand) {
+            "old" -> playerWorryLevel
+            else -> firstOperand.toInt()
+        }
+        val b = when (secondOperand) {
+            "old" -> playerWorryLevel
+            else -> secondOperand.toInt()
+        }
+        
+        return when (operator) {
+            "+" -> a + b
+            "-" -> a - b
+            "*" -> a * b
+            else -> a / b
+        }
     }
     
-    fun inspectNextItem(playerWorryLevel: Int) {
+    fun inspectNextItem(player: Player, listOfMonkeys: MutableList<Monkey>) {
         for (i in 0 until itemsList.size) {
-            val currentItem = itemsList[1]
+            var currentItem = itemsList[i]
+            player.worryLevel = currentItem
             
-            readOperation(playerWorryLevel)
+            player.worryLevel = readOperation(player)
+            player.worryLevel = player.worryLevel.floorDiv(3)
+            
+            currentItem = player.worryLevel
+    
+            val nextMonkeyId = getNextMonkeyId(player.worryLevel)
+            
+            listOfMonkeys[nextMonkeyId].itemsList.add(currentItem)
+            
+            //println("player worry level after operation: ${player.worryLevel}")
         }
+        inspectedItems += itemsList.size
+        itemsList.clear()
+    }
+    
+    override fun toString(): String {
+        return "Items: $itemsList \n" +
+                "Operation: $operation \n" +
+                "Test: $test \n" +
+                "Next Monkey: $nextMonkey \n" +
+                "Inspected items: $inspectedItems \n"
     }
 }
 
-fun getMonkeys(monkeysInfo: MutableList<MutableList<String>>) {
+fun getMonkeys(monkeysInfo: MutableList<MutableList<String>>): MutableList<Monkey> {
+    val listOfMonkeys = mutableListOf<Monkey>()
+    
     monkeysInfo.map {line ->
-        // Put starting items into a list and then set that list to Monkey.itemsList
-        // Store Operation to Monkey.operation as a 3 item vector (List<Int>)
-        // Take the divisible by number and store it in Monkey.test
-        // Take the last two items in "line" and parse the number (lastIndex) and put them in Monkey.nextMonkey
-        println(line)
+        val currentMonkey = Monkey()
+
+        line.map{subLine ->
+            if(subLine.startsWith("Starting")) {
+                currentMonkey.itemsList = subLine.split(":")[1].trim().split(",").map {it.trim().toInt()}.toMutableList()
+            } else if (subLine.startsWith("Operation")) {
+                currentMonkey.operation = subLine.split("=")[1].trim()
+            } else if (subLine.startsWith("Test")) {
+                val testLine = subLine.split(" ")
+                currentMonkey.test = testLine[testLine.lastIndex].toInt()
+            } else {
+                val nextMonkeyLine = subLine.split(" ")
+                val nextMonkeyNumber = nextMonkeyLine[nextMonkeyLine.lastIndex].toInt()
+                currentMonkey.nextMonkey.add(nextMonkeyNumber)
+            }
+        }
+        
+        listOfMonkeys.add(currentMonkey)
     }
+    
+    return listOfMonkeys
 }
 
 fun main () {
     fun part1(input: List<String>) {
         val monkeysInfo = mutableListOf<MutableList<String>>()
         val currentMonkeyInfo = mutableListOf<String>()
+        val player = Player(0)
         
         val inputCleaned = input.filter {line ->
             line.isNotEmpty() && !line.startsWith("Monkey")
@@ -75,10 +131,21 @@ fun main () {
             }
         }
         
-        getMonkeys(monkeysInfo)
+        var monkeys = getMonkeys(monkeysInfo)
         
-        //println(monkeysInfo)
+        repeat(20) {
+            monkeys.map {monkey ->
+                monkey.inspectNextItem(player, monkeys)
+                //println(monkey)
+            }
+        }
+        
+        monkeys = monkeys.sortedWith(compareByDescending { it.inspectedItems }).toMutableList()
+        
+        println(monkeys[0].inspectedItems * monkeys[1].inspectedItems)
+        //println(monkeys)
     }
     
+    //part1(daySetup.controlInput)
     part1(daySetup.input)
 }
